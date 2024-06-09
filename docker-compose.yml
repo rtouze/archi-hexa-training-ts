@@ -1,0 +1,20 @@
+version: "0.1"
+services: 
+  pgdb:
+    image: postgres:16
+    volumes: 
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=enslipch
+      - POSTGRES_USER=enslipch
+      - POSTGRES_PASSWORD=secret
+    ports: 
+      - "7777:5432"
+  pgdb-test:
+    image: postgres:16
+    environment:
+      - POSTGRES_DB=enslipch
+      - POSTGRES_USER=enslipch
+      - POSTGRES_PASSWORD=secret
+    ports: 
+      - "8888:5432"
