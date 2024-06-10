@@ -1,4 +1,4 @@
-import {UtiliserPanier, PanierPresenter} from "./metier/panier"
+import {UtiliserPanier, PanierPresenter} from "./metier/usecases/utiliserpanier"
 import {PanierRepositoryEnMemoire} from "./infra/panier"
 
 class ConsolePresenter implements PanierPresenter {
