@@ -6,13 +6,14 @@ export interface PanierRepository {
 
 export class Panier {
 
-  private items: Array<Item>
+  // private items: Array<Item>
 
   constructor(
     public readonly id:string,
-    private references: Array<string>
+    private references: Array<string>,
+    private items: Array<Item>=[]
   ) {
-    this.items = []
+    // this.items = []
   }
 
   ajouterReference(reference: string) {
@@ -27,7 +28,15 @@ export class Panier {
   toDTO(): PanierDTO {
     return {
       id: this.id,
-      references: this.references.map(r => r)
+      references: this.references.map(r => r),
+    }
+  }
+
+  toDTODb(): PanierDTODB {
+    return {
+      id: this.id,
+      references: this.references.map(r => r),
+      items: this.items.map(i => i)
     }
   }
 
@@ -75,6 +84,12 @@ type Item = {
 export type PanierDTO = {
   id: string
   references: Array<string>
+}
+
+export type PanierDTODB = {
+  id: string
+  references: Array<string>
+  items: Array<Item>
 }
 
 // vim: fdm=indent
