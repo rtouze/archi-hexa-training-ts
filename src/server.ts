@@ -1,13 +1,12 @@
 import fastify from "fastify"
-import routesPanier from "./infra/routes/panier"
 import pg from "@fastify/postgres"
+import webapp from "./webapp"
 
-const server = fastify({ logger: true })
+const server = webapp({ logger: true })
 
 server.register(pg, {
-  connectionString: "postgres://enslipch:enslipch@localhost:7777/enslipch",
+  connectionString: "postgres://enslipch:secret@localhost:7777/enslipch",
 })
-server.register(routesPanier)
 
 server.listen({ port: 8080 }, (err, address) => {
   if (err) {
