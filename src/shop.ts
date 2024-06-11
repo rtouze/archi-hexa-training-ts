@@ -1,5 +1,8 @@
-import {UtiliserPanier, PanierPresenter} from "./metier/usecases/utiliserpanier"
-import {PanierRepositoryEnMemoire} from "./infra/panier"
+import {
+  UtiliserPanier,
+  PanierPresenter,
+} from "./metier/usecases/utiliserpanier"
+import { PanierRepositoryEnMemoire } from "./infra/panier"
 
 class ConsolePresenter implements PanierPresenter {
   private lignes: Array<string>
@@ -7,12 +10,12 @@ class ConsolePresenter implements PanierPresenter {
     this.lignes = []
   }
 
-  envoyerLigne(ligne: string): void  {
+  envoyerLigne(ligne: string): void {
     this.lignes.push(ligne)
   }
 
   afficherLignes(): void {
-    this.lignes.forEach(l => console.log(l))
+    this.lignes.forEach((l) => console.log(l))
   }
 }
 
@@ -28,9 +31,8 @@ async function shop() {
   await utiliserPanier.ajouterReference(panierId, "slip-blanc")
   await utiliserPanier.retirerReference(panierId, "slip-noir")
 
-  const panier = await utiliserPanier.visualiserPanier(panierId)
   const presenter = new ConsolePresenter()
-  await utiliserPanier.visualiserPanier2(panierId, presenter)
+  await utiliserPanier.visualiserPanier(panierId, presenter)
   presenter.afficherLignes()
 }
 

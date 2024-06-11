@@ -6,23 +6,11 @@ export interface PanierRepository {
 
 export class Panier {
 
-  // private items: Array<Item>
-
   constructor(
     public readonly id:string,
     private references: Array<string>,
     private items: Array<Item>=[]
   ) {
-    // this.items = []
-  }
-
-  ajouterReference(reference: string) {
-    this.references.push(reference)
-  }
-
-  retirerReference(reference: string) {
-    const index = this.references.findIndex(r => r === reference)
-    this.references.splice(index, 1)
   }
 
   toDTO(): PanierDTO {

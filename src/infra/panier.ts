@@ -1,5 +1,4 @@
 import {
-  PanierDTO,
   PanierDTODB,
   PanierRepository,
   Panier,

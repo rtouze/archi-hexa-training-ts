@@ -25,7 +25,6 @@ export class UtiliserPanier {
   ): Promise<PanierDTO> {
     const panier = await this.panierRepository.recuperer(panierId)
     panier.ajouterItems(reference, quantite)
-    panier.ajouterReference(reference)
     await this.panierRepository.sauver(panier)
     return panier.toDTO()
   }
@@ -35,7 +34,6 @@ export class UtiliserPanier {
     reference: string,
   ): Promise<PanierDTO> {
     const panier = await this.panierRepository.recuperer(panierId)
-    panier.retirerReference(reference)
     panier.retirerItem(reference)
     await this.panierRepository.sauver(panier)
     return panier.toDTO()
@@ -61,24 +59,7 @@ export class UtiliserPanier {
     return panier.toDTO()
   }
 
-  async visualiserPanier(panierId: string): Promise<PanierDTO> {
-    const panier = await this.panierRepository.recuperer(panierId)
-    return panier.toDTO()
-  }
-
-  async visualiserPanier2(
-    panierId: string,
-    presenter: PanierPresenter,
-  ): Promise<void> {
-    const panier = await this.panierRepository.recuperer(panierId)
-    const ref = panier.getReferences()
-    presenter.envoyerLigne(`Panier ${panier.id}`)
-    ref.forEach((r) => {
-      presenter.envoyerLigne(`   ${r} - 1`)
-    })
-  }
-
-  async visualiserPanier3(
+  async visualiserPanier(
     panierId: string,
     presenter: PanierPresenter,
   ): Promise<void> {
