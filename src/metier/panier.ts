@@ -1,74 +1,51 @@
 import { Quantite, Produit, Article } from "./values"
+
 export interface PanierRepository {
   sauver(panier: Panier): Promise<void>
   recuperer(panierId: string): Promise<Panier>
 }
 
+export interface PanierPresenter {
+  envoyerLigne(ligne: string): void
+}
+
 export class Panier {
   constructor(
     public readonly id: string,
-    private references: Array<string>,
-    private items: Array<Item> = [],
-    public articles: Array<Article> = []
+    public  articles: Array<Article> = []
   ) {}
 
-  toDTO(): PanierDTO {
-    return {
-      id: this.id,
-      references: this.references.map((r) => r),
+  incrementerArticle(produit: Produit) {
+    this.ajouterArticle(produit, new Quantite(1))
+  }
+
+  decrementerArticle(produit: Produit) {
+    const index = this.articles.findIndex(a => a.produit.egale(produit))
+    this.articles[index] = (this.articles[index].decrementerQuantite())
+    if (this.articles[index].quantite.estNulle()) { 
+      this.retirerArticle(produit)
     }
   }
 
-  toDTODb(): PanierDTODB {
-    return {
-      id: this.id,
-      references: this.references.map((r) => r),
-      items: this.items.map((i) => i.toDTO()),
-    }
-  }
-
-  getReferences(): Array<string> {
-    return this.references.map((r) => r)
-  }
-
-  ajouterItems(reference: string, quantite: Quantite): void {
-    const index = this.items.findIndex((i) => i.reference === reference)
-    if (index > -1) {
-      this.items[index].quantite = this.items[index].quantite.ajouter(quantite)
-      return
-    }
-
-    this.items.push(new Item(reference,quantite))
-  }
-
-  incrementerItem(reference: string) {
-    this.ajouterItems(reference, new Quantite(1))
-  }
-
-  decrementerItem(reference: string) {
-    const index = this.items.findIndex((i) => i.reference === reference)
-    this.items[index].quantite = this.items[index].quantite.decrementer()
-    if (this.items[index].quantite.valeur == 0) {
-      this.retirerItem(reference)
-    }
-  }
-
-  retirerItem(reference: string) {
-    const index = this.items.findIndex((i) => i.reference === reference)
-    this.items.splice(index, 1)
-  }
-
-  getItems(): Array<Item> {
-    return this.items
+  retirerArticle(produit: Produit) {
+    const index = this.articles.findIndex(a => a.produit.egale(produit))
+    this.articles.splice(index, 1)
   }
 
   ajouterArticle(produit: Produit, quantite: Quantite) {
-    const index = this.articles.findIndex(a => a.produit.sku == produit.sku)
+    const index = this.articles.findIndex(a => a.produit.egale(produit))
     if (index > -1) {
-      this.articles[index].quantite = this.articles[index].quantite.ajouter(quantite)
+      const foundArticle = this.articles[index]
+      this.articles[index] = foundArticle.ajouterQuantite(quantite)
       return
     }
-    this.articles.push({produit: produit, quantite: quantite})
+    this.articles.push(new Article(produit, quantite))
+  }
+
+  visualiser(presenter: PanierPresenter) {
+    this.articles.forEach(a => {
+      presenter.envoyerLigne(`${a.produit.sku} - ${a.quantite.valeur}`)
+    })
   }
 }
 

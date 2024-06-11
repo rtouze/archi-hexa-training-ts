@@ -1,11 +1,8 @@
 import { v4 as uuidv4 } from "uuid"
-import { PanierRepository, Panier, PanierDTO } from "../panier"
+import { PanierRepository, Panier, PanierPresenter } from "../panier"
 import { Quantite } from "../values"
 import { Catalogue } from "../catalogue"
 
-export interface PanierPresenter {
-  envoyerLigne(ligne: string): void
-}
 
 export class UtiliserPanier {
   panierRepository: PanierRepository
@@ -26,42 +23,32 @@ export class UtiliserPanier {
     panierId: string,
     sku: string,
     quantite: number = 1,
-  ): Promise<PanierDTO> {
+  ): Promise<void> {
     const panier = await this.panierRepository.recuperer(panierId)
     const produit = await this.catalogue.recupererProduit(sku)
     panier.ajouterArticle(produit, new Quantite(quantite))
     await this.panierRepository.sauver(panier)
-    return panier.toDTO()
   }
 
-  async retirerReference(
-    panierId: string,
-    reference: string,
-  ): Promise<PanierDTO> {
+  async retirerReference(panierId: string, sku: string): Promise<void> {
     const panier = await this.panierRepository.recuperer(panierId)
-    panier.retirerItem(reference)
+    const produit = await this.catalogue.recupererProduit(sku)
+    panier.retirerArticle(produit)
     await this.panierRepository.sauver(panier)
-    return panier.toDTO()
   }
 
-  async decrementerReference(
-    panierId: string,
-    reference: string,
-  ): Promise<PanierDTO> {
+  async decrementerReference(panierId: string, sku: string): Promise<void> {
     const panier = await this.panierRepository.recuperer(panierId)
-    panier.decrementerItem(reference)
+    const produit = await this.catalogue.recupererProduit(sku)
+    panier.decrementerArticle(produit)
     await this.panierRepository.sauver(panier)
-    return panier.toDTO()
   }
 
-  async incrementerReference(
-    panierId: string,
-    reference: string,
-  ): Promise<PanierDTO> {
+  async incrementerReference(panierId: string, sku: string): Promise<void> {
+    const produit = await this.catalogue.recupererProduit(sku)
     const panier = await this.panierRepository.recuperer(panierId)
-    panier.incrementerItem(reference)
+    panier.incrementerArticle(produit)
     await this.panierRepository.sauver(panier)
-    return panier.toDTO()
   }
 
   async visualiserPanier(
@@ -69,10 +56,6 @@ export class UtiliserPanier {
     presenter: PanierPresenter,
   ): Promise<void> {
     const panier = await this.panierRepository.recuperer(panierId)
-    const items = panier.getItems()
-    presenter.envoyerLigne(`Panier ${panier.id}`)
-    items.forEach((i) => {
-      presenter.envoyerLigne(`   ${i.reference} - ${i.quantite.valeur}`)
-    })
+    panier.visualiser(presenter)
   }
 }

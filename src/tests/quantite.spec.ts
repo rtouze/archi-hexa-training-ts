@@ -46,4 +46,10 @@ describe("Une Quantité", () => {
     ).toEqual(new Quantite(1))
   })
 
+  test("doit dire si elle est nulle", () => {
+    expect(
+      new Quantite(0).estNulle()
+    ).toBe(true)
+  })
+
 })

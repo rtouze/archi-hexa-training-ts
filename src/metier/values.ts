@@ -17,33 +17,39 @@ export class Quantite {
   }
 
   incrementer(): Quantite {
-    return new Quantite(this.valeur +1)
+    return new Quantite(this.valeur + 1)
   }
 
   decrementer(): Quantite {
-    return new Quantite(this.valeur -1)
+    return new Quantite(this.valeur - 1)
   }
-}
 
-class Sku {
-}
-
-class gtin {
+  estNulle(): boolean {
+    return this.valeur === 0
+  }
 }
 
 class Photo {}
 
-
 class IdentifiantProduit {
-  constructor(public readonly sku: string, public readonly gtin: string)
-  {}
+  constructor(
+    public readonly sku: string,
+    public readonly gtin: string,
+  ) {}
 }
 
 export class Produit {
   constructor(
-    public readonly sku: string, public readonly gtin: string, 
-    public readonly nom: string, public readonly prix: Prix, public readonly description?: string, public readonly photo?: Photo  
-  ) {
+    public readonly sku: string,
+    public readonly gtin: string,
+    public readonly nom: string,
+    public readonly prix: Prix,
+    public readonly description?: string,
+    public readonly photo?: Photo,
+  ) {}
+
+  egale(other: Produit): boolean {
+    return this.sku === other.sku
   }
   // sku
   // gtin
@@ -56,11 +62,10 @@ export class Produit {
 type Prix = number
 
 export class ProduitBuilder {
-  private sku: string =""
-  private gtin: string =""
-  private nom: string =""
+  private sku: string = ""
+  private gtin: string = ""
+  private nom: string = ""
   private prix: Prix = 0
-
 
   avecSku(sku: string): ProduitBuilder {
     this.sku = sku
@@ -77,11 +82,19 @@ export class ProduitBuilder {
   }
 }
 
-export type Article = {
-  quantite: Quantite,
-  produit: Produit
+export class Article {
+  constructor(
+    public readonly produit: Produit,
+    public readonly quantite: Quantite,
+  ) {}
+
+  decrementerQuantite(): Article {
+    return new Article(this.produit, this.quantite.decrementer())
+  }
+
+  ajouterQuantite(quantite: Quantite): Article {
+    return new Article(this.produit, this.quantite.ajouter(quantite))
+  }
 }
 
-
-
-
+// vim: fdm=indent

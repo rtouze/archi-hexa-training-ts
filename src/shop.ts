@@ -1,7 +1,7 @@
 import {
-  UtiliserPanier,
-  PanierPresenter,
+  UtiliserPanier
 } from "./metier/usecases/utiliserpanier"
+import { PanierPresenter } from "./metier/panier"
 import { Catalogue } from "./metier/catalogue"
 import { PanierRepositoryEnMemoire } from "./infra/panier"
 import { Produit } from "./metier/values"
@@ -44,7 +44,7 @@ async function shop() {
   await utiliserPanier.retirerReference(panierId, "slip-noir")
 
   const presenter = new ConsolePresenter()
-  await utiliserPanier.visualiserPanier(panierId, presenter)
+  // await utiliserPanier.visualiserPanier(panierId, presenter)
   presenter.afficherLignes()
 }
 
