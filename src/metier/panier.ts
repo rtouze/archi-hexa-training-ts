@@ -1,11 +1,10 @@
-
+import { Quantite } from './values'
 export interface PanierRepository {
   sauver(panier: Panier): Promise<void>
   recuperer(panierId: string): Promise<Panier>
 }
 
 export class Panier {
-
   constructor(
     public readonly id:string,
     private references: Array<string>,
@@ -33,9 +32,20 @@ export class Panier {
   }
 
   ajouterItems(reference: string, quantite: number): void {
+    // TODO deprecated
     const index= this.items.findIndex(i => i.reference === reference)
     if (index > -1) {
-      this.items[index].quantite += quantite
+      this.items[index].quantite = this.items[index].quantite.ajouter(new Quantite(quantite))
+      return
+    } 
+
+    this.items.push({reference: reference, quantite: new Quantite(quantite)})
+  }
+
+  ajouterItems2(reference: string, quantite: Quantite): void {
+    const index= this.items.findIndex(i => i.reference === reference)
+    if (index > -1) {
+      this.items[index].quantite = this.items[index].quantite.ajouter(quantite)
       return
     } 
 
@@ -48,8 +58,8 @@ export class Panier {
 
   decrementerItem(reference: string) {
     const index= this.items.findIndex(i => i.reference === reference)
-    this.items[index].quantite -= 1
-    if (this.items[index].quantite == 0) {
+    this.items[index].quantite = this.items[index].quantite.decrementer()
+    if (this.items[index].quantite.valeur == 0) {
       this.retirerItem(reference)
     }
   }
@@ -66,7 +76,7 @@ export class Panier {
 
 type Item = {
   reference: string,
-  quantite: number
+  quantite:  Quantite
 }
 
 export type PanierDTO = {

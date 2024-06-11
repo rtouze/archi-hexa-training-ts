@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest"
 import { Panier } from "../metier/panier"
+import {Quantite} from "../metier/values"
 
 describe("Le panier", () => {
 
@@ -17,7 +18,18 @@ describe("Le panier", () => {
     expect(p.getItems()).toEqual([
       {
         reference: "ref1",
-        quantite: 1,
+        quantite: {valeur: 1},
+      },
+    ])
+  })
+
+  test("doit permettre d'ajouter un item de quantite 1 new", () => {
+    const p = new Panier("foobar", [])
+    p.ajouterItems2("ref1", new Quantite(1))
+    expect(p.getItems()).toEqual([
+      {
+        reference: "ref1",
+        quantite: { valeur: 1},
       },
     ])
   })
@@ -28,7 +40,7 @@ describe("Le panier", () => {
     expect(p.getItems()).toEqual([
       {
         reference: "ref1",
-        quantite: 5,
+        quantite: { valeur: 5},
       },
     ])
   })
@@ -40,7 +52,7 @@ describe("Le panier", () => {
     expect(p.getItems()).toEqual([
       {
         reference: "ref1",
-        quantite: 6,
+        quantite: {valeur: 6},
       },
     ])
   })
@@ -52,7 +64,7 @@ describe("Le panier", () => {
     expect(p.getItems()).toEqual([
       {
         reference: "ref1",
-        quantite: 4,
+        quantite: { valeur: 4},
       },
     ])
   })
@@ -65,7 +77,9 @@ describe("Le panier", () => {
     expect(p.getItems()).toEqual([
       {
         reference: "ref1",
-        quantite: 9,
+        quantite: { 
+          valeur: 9
+        }
       },
     ])
   })

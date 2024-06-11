@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid"
 import { PanierRepository, Panier, PanierDTO } from "../panier"
+import { Quantite } from "../values"
 
 export interface PanierPresenter {
   envoyerLigne(ligne: string): void
@@ -24,7 +25,7 @@ export class UtiliserPanier {
     quantite: number = 1,
   ): Promise<PanierDTO> {
     const panier = await this.panierRepository.recuperer(panierId)
-    panier.ajouterItems(reference, quantite)
+    panier.ajouterItems2(reference, new Quantite(quantite))
     await this.panierRepository.sauver(panier)
     return panier.toDTO()
   }
@@ -67,7 +68,7 @@ export class UtiliserPanier {
     const items = panier.getItems()
     presenter.envoyerLigne(`Panier ${panier.id}`)
     items.forEach((i) => {
-      presenter.envoyerLigne(`   ${i.reference} - ${i.quantite}`)
+      presenter.envoyerLigne(`   ${i.reference} - ${i.quantite.valeur}`)
     })
   }
 }
