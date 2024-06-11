@@ -4,6 +4,7 @@ services:
     image: postgres:16
     volumes: 
       - ./data/db:/var/lib/postgresql/data
+      - ./sql:/docker-entrypoint-initdb.d
     environment:
       - POSTGRES_DB=enslipch
       - POSTGRES_USER=enslipch
@@ -12,6 +13,8 @@ services:
       - "7777:5432"
   pgdb-test:
     image: postgres:16
+    volumes: 
+      - ./sql:/docker-entrypoint-initdb.d
     environment:
       - POSTGRES_DB=enslipch
       - POSTGRES_USER=enslipch
