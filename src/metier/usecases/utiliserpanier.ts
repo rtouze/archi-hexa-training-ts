@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from "uuid"
 import { PanierRepository, Panier, PanierDTO } from "../panier"
 import { Quantite } from "../values"
+import { Catalogue } from "../catalogue"
 
 export interface PanierPresenter {
   envoyerLigne(ligne: string): void
@@ -8,9 +9,11 @@ export interface PanierPresenter {
 
 export class UtiliserPanier {
   panierRepository: PanierRepository
+  catalogue: Catalogue
 
-  constructor(panierRepository: PanierRepository) {
+  constructor(panierRepository: PanierRepository, catalogue: Catalogue) {
     this.panierRepository = panierRepository
+    this.catalogue = catalogue
   }
 
   async initialiserPanier(): Promise<string> {
@@ -21,11 +24,12 @@ export class UtiliserPanier {
 
   async ajouterReference(
     panierId: string,
-    reference: string,
+    sku: string,
     quantite: number = 1,
   ): Promise<PanierDTO> {
     const panier = await this.panierRepository.recuperer(panierId)
-    panier.ajouterItems(reference, new Quantite(quantite))
+    const produit = await this.catalogue.recupererProduit(sku)
+    panier.ajouterArticle(produit, new Quantite(quantite))
     await this.panierRepository.sauver(panier)
     return panier.toDTO()
   }

@@ -2,7 +2,9 @@ import {
   UtiliserPanier,
   PanierPresenter,
 } from "./metier/usecases/utiliserpanier"
+import { Catalogue } from "./metier/catalogue"
 import { PanierRepositoryEnMemoire } from "./infra/panier"
+import { Produit } from "./metier/values"
 
 class ConsolePresenter implements PanierPresenter {
   private lignes: Array<string>
@@ -19,11 +21,21 @@ class ConsolePresenter implements PanierPresenter {
   }
 }
 
+class CatalogueStub implements Catalogue {
+  recupererProduit(sku: string): Promise<Produit> {
+    throw new Error("Not implemented")
+  }
+  afficher(): Promise<Array<string>> {
+    throw new Error("Not implemented")
+  }
+}
+
+
 async function shop() {
   console.log("Test de notre shop")
 
   const panierRepository = new PanierRepositoryEnMemoire()
-  const utiliserPanier = new UtiliserPanier(panierRepository)
+  const utiliserPanier = new UtiliserPanier(panierRepository, new CatalogueStub())
 
   const panierId = await utiliserPanier.initialiserPanier()
 

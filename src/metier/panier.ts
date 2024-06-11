@@ -1,4 +1,4 @@
-import { Quantite } from "./values"
+import { Quantite, Produit, Article } from "./values"
 export interface PanierRepository {
   sauver(panier: Panier): Promise<void>
   recuperer(panierId: string): Promise<Panier>
@@ -9,6 +9,7 @@ export class Panier {
     public readonly id: string,
     private references: Array<string>,
     private items: Array<Item> = [],
+    public articles: Array<Article> = []
   ) {}
 
   toDTO(): PanierDTO {
@@ -59,6 +60,15 @@ export class Panier {
 
   getItems(): Array<Item> {
     return this.items
+  }
+
+  ajouterArticle(produit: Produit, quantite: Quantite) {
+    const index = this.articles.findIndex(a => a.produit.sku == produit.sku)
+    if (index > -1) {
+      this.articles[index].quantite = this.articles[index].quantite.ajouter(quantite)
+      return
+    }
+    this.articles.push({produit: produit, quantite: quantite})
   }
 }
 

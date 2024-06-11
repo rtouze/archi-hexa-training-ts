@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest"
 import { Panier } from "../metier/panier"
-import {Quantite} from "../metier/values"
+import {Quantite, ProduitBuilder} from "../metier/values"
 
 describe("Le panier", () => {
 
@@ -99,6 +99,35 @@ describe("Le panier", () => {
     p.ajouterItems("ref1", new Quantite(5))
     p.retirerItem("ref1")
     expect(p.getItems()).toEqual([])
+  })
+
+  test("doit ajouter un produit dans le panier", () => {
+    const panier = new Panier("id_panier", [])
+    const produit = new ProduitBuilder().avecSku("ref1").avecGtin("gtin1").creer()
+    const quantite =  new Quantite(1)
+    panier.ajouterArticle(produit, quantite)
+    expect(panier.articles).toEqual([
+      {
+        produit: produit,
+        quantite: quantite
+      }
+    ])
+  })
+
+  test("doit ajouter plusieurs produits dans le panier", () => {
+    const panier = new Panier("id_panier", [])
+    const produit = new ProduitBuilder().avecSku("ref1").avecGtin("gtin1").creer()
+    const quantite =  new Quantite(1)
+    const quantite2 =  new Quantite(2)
+    panier.ajouterArticle(produit, quantite)
+    panier.ajouterArticle(produit, quantite2)
+
+    expect(panier.articles).toEqual([
+      {
+        produit: produit,
+        quantite: new Quantite(3)
+      }
+    ])
   })
 })
 
