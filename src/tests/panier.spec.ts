@@ -14,7 +14,7 @@ describe("Le panier", () => {
 
   test("doit permettre d'ajouter un item de quantite 1", () => {
     const p = new Panier("foobar", [])
-    p.ajouterItems("ref1", 1)
+    p.ajouterItems("ref1", new Quantite(1))
     expect(p.getItems()).toEqual([
       {
         reference: "ref1",
@@ -25,7 +25,7 @@ describe("Le panier", () => {
 
   test("doit permettre d'ajouter un item de quantite 1 new", () => {
     const p = new Panier("foobar", [])
-    p.ajouterItems2("ref1", new Quantite(1))
+    p.ajouterItems("ref1", new Quantite(1))
     expect(p.getItems()).toEqual([
       {
         reference: "ref1",
@@ -36,7 +36,7 @@ describe("Le panier", () => {
 
   test("doit permettre d'ajouter un item de quantite 5", () => {
     const p = new Panier("foobar", [])
-    p.ajouterItems("ref1", 5)
+    p.ajouterItems("ref1", new Quantite(5))
     expect(p.getItems()).toEqual([
       {
         reference: "ref1",
@@ -47,7 +47,7 @@ describe("Le panier", () => {
 
   test("doit permettre d'incrémenter une quantite d'item", () => {
     const p = new Panier("foobar", [])
-    p.ajouterItems("ref1", 5)
+    p.ajouterItems("ref1", new Quantite(5))
     p.incrementerItem("ref1")
     expect(p.getItems()).toEqual([
       {
@@ -59,7 +59,7 @@ describe("Le panier", () => {
 
   test("doit permettre de décrémenter une quantité d'item", () => {
     const p = new Panier("foobar", [])
-    p.ajouterItems("ref1", 5)
+    p.ajouterItems("ref1", new Quantite(5))
     p.decrementerItem("ref1")
     expect(p.getItems()).toEqual([
       {
@@ -72,8 +72,8 @@ describe("Le panier", () => {
   test("doit permettre d'ajouter des items en gardant une ligne par reference", () => {
 
     const p = new Panier("foobar", [])
-    p.ajouterItems("ref1", 5)
-    p.ajouterItems("ref1", 4)
+    p.ajouterItems("ref1", new Quantite(5))
+    p.ajouterItems("ref1", new Quantite(4))
     expect(p.getItems()).toEqual([
       {
         reference: "ref1",
@@ -86,7 +86,7 @@ describe("Le panier", () => {
 
   test("doit retirer l'item de la liste si sa quantite est nulle", () => {
     const p = new Panier("foobar", [])
-    p.ajouterItems("ref1", 5)
+    p.ajouterItems("ref1", new Quantite( 5))
     for (let i = 0; i <5; i++) {
       p.decrementerItem("ref1")
     }
@@ -96,7 +96,7 @@ describe("Le panier", () => {
 
   test("doit retirer un item", () => {
     const p = new Panier("foobar", [])
-    p.ajouterItems("ref1", 5)
+    p.ajouterItems("ref1", new Quantite(5))
     p.retirerItem("ref1")
     expect(p.getItems()).toEqual([])
   })

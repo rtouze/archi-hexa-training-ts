@@ -31,18 +31,18 @@ export class Panier {
     return this.references.map(r => r)
   }
 
-  ajouterItems(reference: string, quantite: number): void {
-    // TODO deprecated
-    const index= this.items.findIndex(i => i.reference === reference)
-    if (index > -1) {
-      this.items[index].quantite = this.items[index].quantite.ajouter(new Quantite(quantite))
-      return
-    } 
+  // ajouterItems(reference: string, quantite: number): void {
+  //   // TODO deprecated
+  //   const index= this.items.findIndex(i => i.reference === reference)
+  //   if (index > -1) {
+  //     this.items[index].quantite = this.items[index].quantite.ajouter(new Quantite(quantite))
+  //     return
+  //   } 
 
-    this.items.push({reference: reference, quantite: new Quantite(quantite)})
-  }
+  //   this.items.push({reference: reference, quantite: new Quantite(quantite)})
+  // }
 
-  ajouterItems2(reference: string, quantite: Quantite): void {
+  ajouterItems(reference: string, quantite: Quantite): void {
     const index= this.items.findIndex(i => i.reference === reference)
     if (index > -1) {
       this.items[index].quantite = this.items[index].quantite.ajouter(quantite)
@@ -53,7 +53,7 @@ export class Panier {
   }
 
   incrementerItem(reference: string) {
-    this.ajouterItems(reference, 1)
+    this.ajouterItems(reference, new Quantite(1))
   }
 
   decrementerItem(reference: string) {
@@ -76,7 +76,7 @@ export class Panier {
 
 type Item = {
   reference: string,
-  quantite:  Quantite
+  quantite: Quantite
 }
 
 export type PanierDTO = {
