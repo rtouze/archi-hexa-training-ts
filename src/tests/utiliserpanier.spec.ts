@@ -4,7 +4,8 @@ import {
   UtiliserPanier,
   PanierPresenter,
 } from "../metier/usecases/utiliserpanier"
-import { PanierRepository, Panier } from "../metier/panier"
+import { PanierRepository, Panier, Item, ItemDTO } from "../metier/panier"
+import { Quantite } from "../metier/values"
 
 type Collection<T> = {
   [id: string]: T
@@ -16,7 +17,6 @@ class PanierRepositoryDouble implements PanierRepository {
 
   sauver(panier: Panier): Promise<void> {
     this.paniersSauves.push(panier.id)
-    console.debug(panier)
 
     return new Promise((resolve) => {
       this.paniers[panier.id] = JSON.stringify(panier.toDTODb())
@@ -27,7 +27,10 @@ class PanierRepositoryDouble implements PanierRepository {
   recuperer(panierId: string): Promise<Panier> {
     return new Promise((resolve) => {
       const dto = JSON.parse(this.paniers[panierId])
-      const panier = new Panier(dto.id, dto.references, dto.items)
+      const items = dto.items.map(
+        (i: ItemDTO) => new Item(i.reference, new Quantite(i.quantite)),
+      )
+      const panier = new Panier(dto.id, dto.references, items)
 
       resolve(panier)
     })
@@ -46,94 +49,91 @@ class PanierPresenterTestDouble implements PanierPresenter {
 }
 
 describe("UtiliserPanier", () => {
-  test("dummy", () => {
+  let testDouble: PanierRepositoryDouble
+  let panierId: string
+  let usecase: UtiliserPanier
+
+  beforeEach(async () => {
+    testDouble = new PanierRepositoryDouble()
+    usecase = new UtiliserPanier(testDouble)
+    panierId = await usecase.initialiserPanier()
   })
-  // let testDouble: PanierRepositoryDouble
-  // let panierId: string
-  // let usecase: UtiliserPanier
 
-  // beforeEach(async () => {
-  //   testDouble = new PanierRepositoryDouble()
-  //   usecase = new UtiliserPanier(testDouble)
-  //   panierId = await usecase.initialiserPanier()
+  // test("doit initialiser un panier et renvoyer son ID", async () => {
+  //   expect(panierId).toBeDefined()
+  //   expect(await usecase.visualiserPanier(panierId)).toEqual({
+  //     id: panierId,
+  //     references: [],
+  //   })
   // })
 
-  // // test("doit initialiser un panier et renvoyer son ID", async () => {
-  // //   expect(panierId).toBeDefined()
-  // //   expect(await usecase.visualiserPanier(panierId)).toEqual({
-  // //     id: panierId,
-  // //     references: [],
-  // //   })
-  // // })
+  test("doit sauvegarder le panier initialisé en base", async () => {
+    expect(testDouble.panierAEteSauve(panierId)).toBe(true)
+  })
 
-  // test("doit sauvegarder le panier initialisé en base", async () => {
-
-  //   expect(testDouble.panierAEteSauve(panierId)).toBe(true)
-  // })
-
-  // // test("doit ajouter une ref", async () => {
-  // //   await usecase.ajouterReference(panierId, "reference")
-  // //   const p = await usecase.visualiserPanier(panierId)
-  // //   expect(p).toEqual({
-  // //     id: panierId,
-  // //     references: ["reference"],
-  // //   })
-  // // })
-
-  // // test("doit retirer une ref", async () => {
-  // //   await usecase.ajouterReference(panierId, "reference")
-  // //   await usecase.retirerReference(panierId, "reference")
-  // //   const p = await usecase.visualiserPanier(panierId)
-  // //   expect(p).toEqual({
-  // //     id: panierId,
-  // //     references: [],
-  // //   })
-  // // })
-
-  // test("doit permettre de visualiser le panier dans le presenter", async () => {
+  // test("doit ajouter une ref", async () => {
   //   await usecase.ajouterReference(panierId, "reference")
-  //   const panierPresenter = new PanierPresenterTestDouble()
-  //   await usecase.visualiserPanier(panierId, panierPresenter)
-
-  //   expect(panierPresenter.lignes).toEqual([
-  //     `Panier ${panierId}`,
-  //     "   reference - 1",
-  //   ])
+  //   const p = await usecase.visualiserPanier(panierId)
+  //   expect(p).toEqual({
+  //     id: panierId,
+  //     references: ["reference"],
+  //   })
   // })
 
-  // test("doit ajouter une quantité de ref", async () => {
-  //   await usecase.ajouterReference(panierId, "reference", 5)
-  //   await usecase.ajouterReference(panierId, "reference2", 6)
-  //   const panierPresenter = new PanierPresenterTestDouble()
-  //   await usecase.visualiserPanier(panierId, panierPresenter)
-  //   expect(panierPresenter.lignes).toEqual([
-  //     `Panier ${panierId}`,
-  //     "   reference - 5",
-  //     "   reference2 - 6",
-  //   ])
+  // test("doit retirer une ref", async () => {
+  //   await usecase.ajouterReference(panierId, "reference")
+  //   await usecase.retirerReference(panierId, "reference")
+  //   const p = await usecase.visualiserPanier(panierId)
+  //   expect(p).toEqual({
+  //     id: panierId,
+  //     references: [],
+  //   })
   // })
 
-  // test("doit décrementer une quantité de ref", async () => {
-  //   await usecase.ajouterReference(panierId, "reference", 5)
-  //   await usecase.decrementerReference(panierId, "reference")
-  //   const panierPresenter = new PanierPresenterTestDouble()
-  //   await usecase.visualiserPanier(panierId, panierPresenter)
-  //   expect(panierPresenter.lignes).toEqual([
-  //     `Panier ${panierId}`,
-  //     "   reference - 4",
-  //   ])
-  // })
+  test("doit permettre de visualiser le panier dans le presenter", async () => {
+    await usecase.ajouterReference(panierId, "reference")
+    const panierPresenter = new PanierPresenterTestDouble()
+    await usecase.visualiserPanier(panierId, panierPresenter)
 
-  // test("doit incrémenter une quantité de ref", async () => {
-  //   await usecase.ajouterReference(panierId, "reference", 5)
-  //   await usecase.incrementerReference(panierId, "reference")
-  //   const panierPresenter = new PanierPresenterTestDouble()
-  //   await usecase.visualiserPanier(panierId, panierPresenter)
-  //   expect(panierPresenter.lignes).toEqual([
-  //     `Panier ${panierId}`,
-  //     "   reference - 6",
-  //   ])
-  // })
+    expect(panierPresenter.lignes).toEqual([
+      `Panier ${panierId}`,
+      "   reference - 1",
+    ])
+  })
+
+  test("doit ajouter une quantité de ref", async () => {
+    await usecase.ajouterReference(panierId, "reference", 5)
+    await usecase.ajouterReference(panierId, "reference2", 6)
+    const panierPresenter = new PanierPresenterTestDouble()
+    await usecase.visualiserPanier(panierId, panierPresenter)
+    expect(panierPresenter.lignes).toEqual([
+      `Panier ${panierId}`,
+      "   reference - 5",
+      "   reference2 - 6",
+    ])
+  })
+
+  test("doit décrementer une quantité de ref", async () => {
+    await usecase.ajouterReference(panierId, "reference", 5)
+    await usecase.decrementerReference(panierId, "reference")
+    const panierPresenter = new PanierPresenterTestDouble()
+    await usecase.visualiserPanier(panierId, panierPresenter)
+    expect(panierPresenter.lignes).toEqual([
+      `Panier ${panierId}`,
+      "   reference - 4",
+    ])
+  })
+
+  test("doit incrémenter une quantité de ref", async () => {
+    await usecase.ajouterReference(panierId, "reference", 5)
+    await usecase.incrementerReference(panierId, "reference")
+    const panierPresenter = new PanierPresenterTestDouble()
+    await usecase.visualiserPanier(panierId, panierPresenter)
+    expect(panierPresenter.lignes).toEqual([
+      `Panier ${panierId}`,
+      "   reference - 6",
+    ])
+  })
 })
 
 // vim: fdm=indent

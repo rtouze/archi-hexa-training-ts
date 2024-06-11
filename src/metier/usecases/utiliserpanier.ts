@@ -25,7 +25,7 @@ export class UtiliserPanier {
     quantite: number = 1,
   ): Promise<PanierDTO> {
     const panier = await this.panierRepository.recuperer(panierId)
-    panier.ajouterItems2(reference, new Quantite(quantite))
+    panier.ajouterItems(reference, new Quantite(quantite))
     await this.panierRepository.sauver(panier)
     return panier.toDTO()
   }

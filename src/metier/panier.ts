@@ -1,4 +1,4 @@
-import { Quantite } from './values'
+import { Quantite } from "./values"
 export interface PanierRepository {
   sauver(panier: Panier): Promise<void>
   recuperer(panierId: string): Promise<Panier>
@@ -6,50 +6,38 @@ export interface PanierRepository {
 
 export class Panier {
   constructor(
-    public readonly id:string,
+    public readonly id: string,
     private references: Array<string>,
-    private items: Array<Item>=[]
-  ) {
-  }
+    private items: Array<Item> = [],
+  ) {}
 
   toDTO(): PanierDTO {
     return {
       id: this.id,
-      references: this.references.map(r => r),
+      references: this.references.map((r) => r),
     }
   }
 
   toDTODb(): PanierDTODB {
     return {
       id: this.id,
-      references: this.references.map(r => r),
-      items: this.items.map(i => i)
+      references: this.references.map((r) => r),
+      items: this.items.map((i) => i.toDTO()),
     }
   }
 
   getReferences(): Array<string> {
-    return this.references.map(r => r)
+    return this.references.map((r) => r)
   }
 
-  // ajouterItems(reference: string, quantite: number): void {
-  //   // TODO deprecated
-  //   const index= this.items.findIndex(i => i.reference === reference)
-  //   if (index > -1) {
-  //     this.items[index].quantite = this.items[index].quantite.ajouter(new Quantite(quantite))
-  //     return
-  //   } 
-
-  //   this.items.push({reference: reference, quantite: new Quantite(quantite)})
-  // }
-
   ajouterItems(reference: string, quantite: Quantite): void {
-    const index= this.items.findIndex(i => i.reference === reference)
+    const index = this.items.findIndex((i) => i.reference === reference)
     if (index > -1) {
       this.items[index].quantite = this.items[index].quantite.ajouter(quantite)
       return
-    } 
+    }
 
-    this.items.push({reference: reference, quantite:quantite})
+    this.items.push(new Item(reference,quantite))
   }
 
   incrementerItem(reference: string) {
@@ -57,26 +45,40 @@ export class Panier {
   }
 
   decrementerItem(reference: string) {
-    const index= this.items.findIndex(i => i.reference === reference)
+    const index = this.items.findIndex((i) => i.reference === reference)
     this.items[index].quantite = this.items[index].quantite.decrementer()
     if (this.items[index].quantite.valeur == 0) {
       this.retirerItem(reference)
     }
   }
 
-  retirerItem(reference:string) {
-    const index= this.items.findIndex(i => i.reference === reference)
-    this.items.splice(index,1)
+  retirerItem(reference: string) {
+    const index = this.items.findIndex((i) => i.reference === reference)
+    this.items.splice(index, 1)
   }
 
-  getItems():Array<Item> {
+  getItems(): Array<Item> {
     return this.items
   }
 }
 
-type Item = {
-  reference: string,
-  quantite: Quantite
+export type ItemDTO = {
+  reference: string
+  quantite: number
+}
+
+export class Item {
+  constructor(
+    public readonly reference: string,
+    public quantite: Quantite,
+  ) {}
+
+  toDTO(): ItemDTO {
+    return {
+      reference: this.reference,
+      quantite: this.quantite.valeur,
+    }
+  }
 }
 
 export type PanierDTO = {
@@ -87,7 +89,7 @@ export type PanierDTO = {
 export type PanierDTODB = {
   id: string
   references: Array<string>
-  items: Array<Item>
+  items: Array<ItemDTO>
 }
 
 // vim: fdm=indent

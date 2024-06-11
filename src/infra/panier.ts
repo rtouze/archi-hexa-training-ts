@@ -2,7 +2,10 @@ import {
   PanierDTODB,
   PanierRepository,
   Panier,
+  Item,
+  ItemDTO,
 } from "../metier/panier"
+import { Quantite } from "../metier/values"
 
 type Collection<T> = {
   [id: string]: T
@@ -24,7 +27,10 @@ export class PanierRepositoryEnMemoire implements PanierRepository {
   recuperer(panierId: string): Promise<Panier> {
     return new Promise((resolve) => {
       const dto: PanierDTODB = JSON.parse(this.paniers[panierId])
-      const panier = new Panier(dto.id, dto.references, dto.items)
+      const items = dto.items.map(
+        (i: ItemDTO) => new Item(i.reference, new Quantite(i.quantite)),
+      )
+      const panier = new Panier(dto.id, dto.references, items)
 
       resolve(panier)
     })
