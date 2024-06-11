@@ -8,7 +8,6 @@ type CreatePanierRequestBody = {
 export default async function routesPanier(
   fastify: FastifyInstance,
   options: any,
-  done: any
 ) {
   fastify.get("/", async (request: FastifyRequest, reply: FastifyReply) => {
     reply.status(200).send({ hello: "panier" })
@@ -21,5 +20,4 @@ export default async function routesPanier(
       reply.status(200).send({ panier: "piano" })
     },
   )
-  done()
 }

@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "watch": "tsc --watch",
-    "test": "vitest --reporter=verbose"
+    "test": "vitest --dir=src/tests --reporter=verbose",
+    "integ": "vitest --dir=src/tests_integration --reporter=verbose"
   },
   "author": "",
   "license": "ISC",
