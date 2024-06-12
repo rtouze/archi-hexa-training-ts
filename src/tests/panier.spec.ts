@@ -1,5 +1,5 @@
 import { describe, expect, test, beforeEach } from "vitest"
-import { Panier, PanierPresenter } from "../metier/panier"
+import { Panier, PanierPresenter, EventType } from "../metier/panier"
 import { Quantite, ProduitBuilder, Produit, Article, Adresse } from "../metier/values"
 
 function getProduit(suffix: string = "ref"): Produit {
@@ -48,6 +48,14 @@ describe("Le panier", () => {
 
     expect(panier.articles[0].produit.sku).toEqual("sku-ref")
     expect(panier.articles[0].quantite).toEqual(new Quantite(6))
+
+    const events = panier.getEvents()
+
+    expect(events[0].type).toEqual(EventType.AJOUT) 
+    expect(events[0].eventData).toEqual({sku: "sku-ref", quantite: 5}) 
+    expect(events[1].type).toEqual(EventType.AJOUT) 
+    expect(events[1].eventData).toEqual({sku: "sku-ref", quantite: 1}) 
+
   })
 
   test("doit permettre de décrémenter une quantite de produit", () => {
@@ -182,6 +190,29 @@ describe("Le panier", () => {
     ville: "Lyon",
     pays: "France"
     })
+  })
+
+  test("peut etre reconstruit a partir des events", () => {
+    const events = [
+      {
+        timestamp: new Date(),
+        type: EventType.AJOUT,
+        eventData: {
+          sku: "ref1",
+          quantite: 2
+        }
+      },
+      {
+        timestamp: new Date(),
+        type: EventType.AJOUT,
+        eventData: {
+          sku: "ref1",
+          quantite: 3
+        }
+      }
+    ]
+    const panier = Panier.fromEvents("panierId", events)
+    expect(panier.toDto().articles[0].quantite).toEqual(5)
   })
 })
 
