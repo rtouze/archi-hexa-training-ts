@@ -45,21 +45,21 @@ export class PanierRepositoryDb implements PanierRepository {
   async sauver(panier: Panier): Promise<void> {
     const dto = panier.toDto()
 
-    await this.client.query(
-      "INSERT INTO panier (uuid) VALUES ($1) ON CONFLICT (uuid) DO NOTHING",
-      [dto.id],
+    const queries = [
+      this.client.query(
+        "INSERT INTO panier (uuid) VALUES ($1) ON CONFLICT (uuid) DO NOTHING",
+        [dto.id],
+      ),
+      this.client.query("DELETE FROM article WHERE panier_id = $1", [dto.id]),
+    ].concat(
+      dto.articles.map(async (a) =>
+        this.client.query(
+          "INSERT INTO article (panier_id, quantity, sku) VALUES ($1, $2, $3)",
+          [dto.id, a.quantite, a.produit.sku],
+        ),
+      ),
     )
-
-    await this.client.query("DELETE FROM article WHERE panier_id = $1", [
-      dto.id,
-    ])
-
-    dto.articles.forEach(async (a) => {
-      await this.client.query(
-        "INSERT INTO article (panier_id, quantity, sku) VALUES ($1, $2, $3)",
-        [dto.id, a.quantite, a.produit.sku],
-      )
-    })
+    await Promise.all(queries)
   }
 
   async recuperer(panierId: string): Promise<Panier> {
