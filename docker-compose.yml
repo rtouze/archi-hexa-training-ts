@@ -14,6 +14,7 @@ services:
   pgdb-test:
     image: postgres:16
     volumes: 
+      - ./data-test/db:/var/lib/postgresql/data
       - ./sql:/docker-entrypoint-initdb.d
     environment:
       - POSTGRES_DB=enslipch

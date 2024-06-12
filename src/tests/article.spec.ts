@@ -21,4 +21,16 @@ describe("Article", () => {
     const newArticle = article.decrementerQuantite()
     expect(newArticle.quantite).toEqual(new Quantite(1))
   })
+
+  test("peut generer un DTO", () => {
+    const article = new Article(getProduit(), new Quantite(2))
+    expect(article.toDto()).toEqual({
+      quantite: 2,
+      produit: {
+        sku: 'sku-ref',
+        gtin: 'gtin-ref'
+      }
+    })
+  })
+
 })

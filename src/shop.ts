@@ -1,7 +1,7 @@
 import {
   UtiliserPanier
 } from "./metier/usecases/utiliserpanier"
-import { PanierPresenter } from "./metier/panier"
+import { PanierPresenter, Panier } from "./metier/panier"
 import { Catalogue } from "./metier/catalogue"
 import { PanierRepositoryEnMemoire } from "./infra/panier"
 import { Produit } from "./metier/values"
@@ -18,6 +18,10 @@ class ConsolePresenter implements PanierPresenter {
 
   afficherLignes(): void {
     this.lignes.forEach((l) => console.log(l))
+  }
+
+  envoyerPanier(panier: Panier) {
+    throw new Error("Not implemented")
   }
 }
 

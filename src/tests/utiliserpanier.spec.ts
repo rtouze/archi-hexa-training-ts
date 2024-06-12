@@ -33,6 +33,10 @@ class PanierPresenterTestDouble implements PanierPresenter {
   envoyerLigne(ligne: string): void {
     this.lignes.push(ligne)
   }
+
+  envoyerPanier(panier: Panier) {
+    throw new Error("Not implemented")
+  }
 }
 
 class CatalogueDouble implements Catalogue {

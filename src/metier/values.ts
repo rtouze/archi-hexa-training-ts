@@ -51,12 +51,16 @@ export class Produit {
   egale(other: Produit): boolean {
     return this.sku === other.sku
   }
-  // sku
-  // gtin
-  // nom
-  // desc
-  // photo
-  // prix
+
+  toDto(): ProduitDTO {
+    return {sku:this.sku, gtin: this.gtin}
+  }
+
+}
+
+type ProduitDTO = {
+  sku: string
+  gtin: string
 }
 
 type Prix = number
@@ -95,6 +99,18 @@ export class Article {
   ajouterQuantite(quantite: Quantite): Article {
     return new Article(this.produit, this.quantite.ajouter(quantite))
   }
+
+  toDto(): ArticleDTO {
+    return {
+      quantite: this.quantite.valeur,
+      produit: this.produit.toDto()
+    }
+  }
+}
+
+export type ArticleDTO = {
+  quantite: number
+  produit: ProduitDTO
 }
 
 // vim: fdm=indent

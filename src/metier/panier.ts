@@ -1,4 +1,4 @@
-import { Quantite, Produit, Article } from "./values"
+import { Quantite, Produit, Article, ArticleDTO } from "./values"
 
 export interface PanierRepository {
   sauver(panier: Panier): Promise<void>
@@ -7,6 +7,7 @@ export interface PanierRepository {
 
 export interface PanierPresenter {
   envoyerLigne(ligne: string): void
+  envoyerPanier(panier: Panier): void
 }
 
 export class Panier {
@@ -47,11 +48,18 @@ export class Panier {
       presenter.envoyerLigne(`${a.produit.sku} - ${a.quantite.valeur}`)
     })
   }
+
+  toDto(): PanierDTO {
+    return {
+      id: this.id,
+      articles: this.articles.map(a => a.toDto())
+    }
+  }
 }
 
 export type PanierDTO = {
   id: string
-  references: Array<string>
+  articles: Array<ArticleDTO>
 }
 
 // vim: fdm=indent
