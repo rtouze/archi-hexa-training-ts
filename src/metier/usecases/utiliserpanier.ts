@@ -3,6 +3,28 @@ import { PanierRepository, Panier, PanierPresenter } from "../panier"
 import { Quantite } from "../values"
 import { Catalogue } from "../catalogue"
 
+export interface IUtiliserPanier {
+  initialiserPanier(): Promise<string> 
+
+  ajouterReference(
+    panierId: string,
+    sku: string,
+    quantite: number,
+  ): Promise<void> 
+
+  retirerReference(panierId: string, sku: string): Promise<void> 
+
+  decrementerReference(panierId: string, sku: string): Promise<void> 
+
+  incrementerReference(panierId: string, sku: string): Promise<void> 
+
+  visualiserPanier(
+    panierId: string,
+    presenter: PanierPresenter,
+  ): Promise<void> 
+
+}
+
 
 export class UtiliserPanier {
   panierRepository: PanierRepository
