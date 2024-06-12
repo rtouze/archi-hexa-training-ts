@@ -4,7 +4,7 @@ import {
 import { PanierPresenter, Panier } from "./metier/panier"
 import { Catalogue } from "./metier/catalogue"
 import { PanierRepositoryEnMemoire } from "./infra/panier"
-import { Produit } from "./metier/values"
+import { Produit, AdresseRepository, Adresse} from "./metier/values"
 
 class ConsolePresenter implements PanierPresenter {
   private lignes: Array<string>
@@ -34,12 +34,18 @@ class CatalogueStub implements Catalogue {
   }
 }
 
+class AdresseRepositoryStub implements AdresseRepository {
+  recupererAresse(adresseId: string): Promise<Adresse> {
+    throw new Error("not impl")
+  }
+}
+
 
 async function shop() {
   console.log("Test de notre shop")
 
   const panierRepository = new PanierRepositoryEnMemoire()
-  const utiliserPanier = new UtiliserPanier(panierRepository, new CatalogueStub())
+  const utiliserPanier = new UtiliserPanier(panierRepository, new CatalogueStub(), new AdresseRepositoryStub())
 
   const panierId = await utiliserPanier.initialiserPanier()
 

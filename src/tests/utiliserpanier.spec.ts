@@ -2,7 +2,7 @@ import { describe, expect, test, beforeEach } from "vitest"
 
 import { UtiliserPanier } from "../metier/usecases/utiliserpanier"
 import { PanierRepository, Panier, PanierPresenter } from "../metier/panier"
-import { Quantite, Produit, ProduitBuilder } from "../metier/values"
+import { Quantite, Produit, ProduitBuilder, AdresseRepository, Adresse} from "../metier/values"
 import { Catalogue } from "../metier/catalogue"
 
 type Collection<T> = {
@@ -51,16 +51,30 @@ class CatalogueDouble implements Catalogue {
   }
 }
 
+
+class AdresseRepositoryTestDouble implements AdresseRepository {
+  async recupererAresse(adresseId: string): Promise<Adresse> {
+    return new Adresse(
+      "google_place",
+      "23 rue favre",
+      "69006",
+      "Lyon",
+      "France"
+    )
+  }
+}
+
 describe("UtiliserPanier", () => {
   let panierRepositoryDouble: PanierRepositoryDouble
   let catalogueDouble: CatalogueDouble
   let panierId: string
   let usecase: UtiliserPanier
+  const adresseRepositoryTestDouble = new AdresseRepositoryTestDouble()
 
   beforeEach(async () => {
     panierRepositoryDouble = new PanierRepositoryDouble()
     catalogueDouble = new CatalogueDouble()
-    usecase = new UtiliserPanier(panierRepositoryDouble, catalogueDouble)
+    usecase = new UtiliserPanier(panierRepositoryDouble, catalogueDouble, adresseRepositoryTestDouble)
     panierId = await usecase.initialiserPanier()
   })
 
@@ -106,6 +120,16 @@ describe("UtiliserPanier", () => {
     await usecase.retirerReference(panierId, "reference")
     const paniers = panierRepositoryDouble.paniers
     expect(paniers[panierId].articles).toHaveLength(0)
+  })
+
+  test("doit retirer une ref", async () => {
+    await usecase.ajouterReference(panierId, "reference", 5)
+    await usecase.retirerReference(panierId, "reference")
+    const paniers = panierRepositoryDouble.paniers
+    expect(paniers[panierId].articles).toHaveLength(0)
+  })
+
+  test("doit ajouter une adresse sur un panier", async() => {
   })
 })
 

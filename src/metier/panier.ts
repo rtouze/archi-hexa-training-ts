@@ -1,4 +1,4 @@
-import { Quantite, Produit, Article, ArticleDTO } from "./values"
+import { Quantite, Produit, Article, ArticleDTO, Adresse, AdresseDTO } from "./values"
 
 export interface PanierRepository {
   sauver(panier: Panier): Promise<void>
@@ -11,6 +11,8 @@ export interface PanierPresenter {
 }
 
 export class Panier {
+  private adresse?: Adresse
+
   constructor(
     public readonly id: string,
     public  articles: Array<Article> = []
@@ -50,16 +52,33 @@ export class Panier {
   }
 
   toDto(): PanierDTO {
-    return {
+    const dto: PanierDTO = {
       id: this.id,
-      articles: this.articles.map(a => a.toDto())
+      articles: this.articles.map(a => a.toDto()),
+      // adresse: {
+      //   google_place_id: "google_place",
+      //   rue: "23 rue favre",
+      //   code_postal: "69006",
+      //   ville: "Lyon",
+      //   pays: "France"
+      // }
     }
+    if (this.adresse) {
+      dto.adresse = this.adresse.toDto()
+    }
+    return dto
+  }
+
+  ajouterAdresse(adresse:Adresse) {
+    this.adresse = adresse
   }
 }
 
+
 export type PanierDTO = {
   id: string
-  articles: Array<ArticleDTO>
+  articles: Array<ArticleDTO>,
+  adresse?: AdresseDTO
 }
 
 // vim: fdm=indent

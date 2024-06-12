@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid"
 import { PanierRepository, Panier, PanierPresenter } from "../panier"
-import { Quantite } from "../values"
+import { Quantite, AdresseRepository } from "../values"
 import { Catalogue } from "../catalogue"
 
 export interface IUtiliserPanier {
@@ -27,12 +27,8 @@ export interface IUtiliserPanier {
 
 
 export class UtiliserPanier {
-  panierRepository: PanierRepository
-  catalogue: Catalogue
 
-  constructor(panierRepository: PanierRepository, catalogue: Catalogue) {
-    this.panierRepository = panierRepository
-    this.catalogue = catalogue
+  constructor(private readonly panierRepository: PanierRepository, private readonly catalogue: Catalogue, private readonly adresseRepository:AdresseRepository) {
   }
 
   async initialiserPanier(): Promise<string> {
@@ -72,6 +68,7 @@ export class UtiliserPanier {
     panier.incrementerArticle(produit)
     await this.panierRepository.sauver(panier)
   }
+
 
   async visualiserPanier(
     panierId: string,

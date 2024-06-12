@@ -1,6 +1,6 @@
 import { describe, expect, test, beforeEach } from "vitest"
 import { Panier, PanierPresenter } from "../metier/panier"
-import { Quantite, ProduitBuilder, Produit, Article } from "../metier/values"
+import { Quantite, ProduitBuilder, Produit, Article, Adresse } from "../metier/values"
 
 function getProduit(suffix: string = "ref"): Produit {
   return new ProduitBuilder()
@@ -161,6 +161,27 @@ describe("Le panier", () => {
         quantite: 2
       }
       ]})
+  })
+
+  test("peut contenir une adresse", () => {
+    const panier = new Panier("xxx", [])
+    const adresse = new Adresse(
+      "google_place",
+      "23 rue favre",
+      "69006",
+      "Lyon",
+      "France"
+    )
+    panier.ajouterAdresse(adresse)
+    const dto = panier.toDto()
+    expect(dto.adresse).toEqual({
+    google_place_id: 
+      "google_place",
+    rue: "23 rue favre",
+    code_postal: "69006",
+    ville: "Lyon",
+    pays: "France"
+    })
   })
 })
 
