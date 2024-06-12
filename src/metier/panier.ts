@@ -49,34 +49,9 @@ export class Panier {
   }
 }
 
-export type ItemDTO = {
-  reference: string
-  quantite: number
-}
-
-export class Item {
-  constructor(
-    public readonly reference: string,
-    public quantite: Quantite,
-  ) {}
-
-  toDTO(): ItemDTO {
-    return {
-      reference: this.reference,
-      quantite: this.quantite.valeur,
-    }
-  }
-}
-
 export type PanierDTO = {
   id: string
   references: Array<string>
-}
-
-export type PanierDTODB = {
-  id: string
-  references: Array<string>
-  items: Array<ItemDTO>
 }
 
 // vim: fdm=indent

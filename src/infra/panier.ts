@@ -1,11 +1,7 @@
 import {
-  PanierDTODB,
   PanierRepository,
   Panier,
-  Item,
-  ItemDTO,
 } from "../metier/panier"
-import { Quantite } from "../metier/values"
 
 type Collection<T> = {
   [id: string]: T
